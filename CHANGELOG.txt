@@ -1,7 +1,20 @@
+JBCookies 6.0.2 (15-01-2025)
+================================================================================
+~ Fixed the display of the modal in the Brave browser.
+~ Visualization and sorting of groups according to the data added by the user in the module.
+
 JBCookies 6.0.1 (02-01-2025)
 ================================================================================
 ~ New Url Update: https://www.joomball.com/updates/mod_jbcookies.xml
 + Language: hu-HU (Hungarian) By István.
+
+~ Languages:	ca-ES (Catalan), es-ES (Spanish), en-GB (United Kingdom), be-BY (Belarusian),
+				de-DE (German), el-GR (Greek), fr-FR (French), it-IT (Italian) , nl-NL (Dutch),
+				pl-PL (Polish), pt-PT (Portuguese), ru-RU (Russian), sv-SE (Swedish), ch-CN (Chinese, Simplified),
+				hu-HU (Hungarian)
+
+
+CAL AFEGIR IDIOMA cs-CZ
 
 JBCookies 6.0.0 (20-12-2025)
 ================================================================================

@@ -11,22 +11,22 @@ use Joomla\CMS\Language\Text;
 $preferencesGroups = $cookiePreferencesConfig['groups'] ?? [];
 $inventoryByGroup  = $cookiePreferencesConfig['inventory'] ?? [];
 ?>
-<div class="modal robots-noindex robots-nofollow robots-nocontent" id="jbcookies-preferences" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="jbcookies-preferences-label" tabindex="-1">
+<div class="modal robots-noindex robots-nofollow robots-nocontent" id="jb-privacy-preferences" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="jb-privacy-preferences-label" aria-modal="true" aria-hidden="true" role="dialog" tabindex="-1">
 	<div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down modal-dialog-scrollable">
 		<div class="modal-content">
 			<div class="modal-header">
-				<div class="modal-title" id="jbcookies-preferences-label"><?php echo Text::_('MOD_JBCOOKIES_MODAL_TITLE'); ?></div>
-				<button type="button" class="btn-close" data-bs-target=".jb-cookie" data-bs-toggle="modal" aria-label="<?php echo Text::_('JLIB_HTML_BEHAVIOR_CLOSE'); ?>"></button>
+				<div class="modal-title" id="jb-privacy-preferences-label"><?php echo Text::_('MOD_JBCOOKIES_MODAL_TITLE'); ?></div>
+				<button type="button" class="btn-close" data-bs-target="#jb-privacy" data-bs-toggle="modal" aria-label="<?php echo Text::_('JLIB_HTML_BEHAVIOR_CLOSE'); ?>"></button>
 			</div>
 			<div class="modal-body">
 				<?php if ($preferencesGroups) : ?>
-					<div class="jb-cookie-preferences">
+					<div class="jb-privacy-preferences">
 						<?php foreach ($preferencesGroups as $group) :
 							$groupSlug   = $group['slug'];
 							$groupId     = 'jb-toggle-' . $groupSlug;
 							$groupCookies = $inventoryByGroup[$groupSlug] ?? [];
 						?>
-							<section class="jb-cookie-group border rounded p-3 mb-3" data-group="<?php echo $groupSlug; ?>">
+							<section class="jb-privacy-group border rounded p-3 mb-3" data-group="<?php echo $groupSlug; ?>">
 								<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-2">
 									<div>
 										<h6 class="mb-1"><?php echo htmlspecialchars($group['title'], ENT_QUOTES, 'UTF-8'); ?></h6>
@@ -35,13 +35,23 @@ $inventoryByGroup  = $cookiePreferencesConfig['inventory'] ?? [];
 										<?php endif; ?>
 									</div>
 									<div class="form-check form-switch">
-										<input class="form-check-input jb-cookie-toggle" type="checkbox" role="switch" id="<?php echo $groupId; ?>" data-group="<?php echo $groupSlug; ?>" data-default="<?php echo $group['default'] ? '1' : '0'; ?>" <?php echo $group['required'] ? 'checked disabled' : 'checked'; ?>>
+										<input class="form-check-input jb-privacy-toggle" type="checkbox" role="switch" id="<?php echo $groupId; ?>" data-group="<?php echo $groupSlug; ?>" data-default="<?php echo $group['default'] ? '1' : '0'; ?>" <?php echo $group['required'] ? 'checked disabled' : 'checked'; ?>>
 										<label class="form-check-label small" for="<?php echo $groupId; ?>"></label>
 									</div>
 								</div>
 								<?php if ($groupCookies) : ?>
-									<p class="text-muted small mb-1"><?php echo Text::plural('MOD_JBCOOKIES_MODAL_COOKIES_FOUND', count($groupCookies), count($groupCookies)); ?></p>
-									<ul class="jb-cookie-inventory list-unstyled small mb-0">
+									<?php
+										$count = count($groupCookies);
+										if ($count === 0) {
+											$foundText = Text::_('MOD_JBCOOKIES_MODAL_COOKIES_FOUND_0');
+										} elseif ($count === 1) {
+											$foundText = Text::sprintf('MOD_JBCOOKIES_MODAL_COOKIES_FOUND_1', $count);
+										} else {
+											$foundText = Text::sprintf('MOD_JBCOOKIES_MODAL_COOKIES_FOUND_MORE', $count);
+										}
+									?>
+									<p class="text-muted small mb-1"><?php echo $foundText; ?></p>
+									<ul class="jb-privacy-inventory list-unstyled small mb-0">
 										<?php foreach ($groupCookies as $cookie) : ?>
 											<li class="py-1 border-top">
 												<strong><?php echo htmlspecialchars($cookie['name'], ENT_QUOTES, 'UTF-8'); ?></strong>

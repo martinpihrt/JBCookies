@@ -7,8 +7,8 @@
 		var inventory = cfg.inventory || {};
 		var ajax = cfg.ajax || {};
 
-		var banner = new bootstrap.Modal('.jb-cookie', {});
-		var decline = jQuery('.jb-cookie-decline');
+		var banner = new bootstrap.Modal('.jb-privacy', {});
+		var decline = jQuery('.jb-privacy-reopen');
 		var consent = readConsent();
 
 		applyPreferences(consent.preferences || {});
@@ -22,9 +22,7 @@
 
 		function handleInitialState(status) {
 			if (!status) {
-				setTimeout(function () {
-					banner.show();
-				}, 500);
+				banner.show();
 				return;
 			}
 
@@ -56,7 +54,7 @@
 				showDeclinePanel();
 			});
 
-			jQuery('.jb-cookie-decline').on('click', function () {
+			jQuery('.jb-privacy-reopen').on('click', function () {
 				eraseCookie('jbcookies');
 				decline.fadeOut('slow', function () {
 					banner.show();
@@ -65,7 +63,7 @@
 		}
 
 		function setAllToggles(state) {
-			document.querySelectorAll('.jb-cookie-toggle').forEach(function (input) {
+			document.querySelectorAll('.jb-privacy-toggle').forEach(function (input) {
 				if (!input.disabled) {
 					input.checked = state;
 				}
@@ -74,7 +72,7 @@
 
 		function collectPreferences() {
 			var prefs = {};
-			document.querySelectorAll('.jb-cookie-toggle').forEach(function (input) {
+			document.querySelectorAll('.jb-privacy-toggle').forEach(function (input) {
 				var key = input.getAttribute('data-group');
 				prefs[key] = input.checked ? 1 : 0;
 			});
@@ -107,7 +105,7 @@
 		}
 
 		function applyPreferences(prefs) {
-			document.querySelectorAll('.jb-cookie-toggle').forEach(function (input) {
+			document.querySelectorAll('.jb-privacy-toggle').forEach(function (input) {
 				var key = input.getAttribute('data-group');
 				if (Object.prototype.hasOwnProperty.call(prefs, key) && !input.disabled) {
 					input.checked = !!prefs[key];
@@ -212,7 +210,7 @@
 		}
 
 		function hidePreferencesModal() {
-			var modalEl = document.getElementById('jbcookies-preferences');
+			var modalEl = document.getElementById('jb-privacy-preferences');
 			if (!modalEl) {
 				return;
 			}
@@ -228,8 +226,8 @@
 		}
 
 		function wireModalFocus() {
-			var prefModal = document.getElementById('jbcookies-preferences');
-			var mainModal = document.querySelector('.jb-cookie');
+			var prefModal = document.getElementById('jb-privacy-preferences');
+			var mainModal = document.querySelector('.jb-privacy');
 
 			if (prefModal) {
 				prefModal.addEventListener('shown.bs.modal', function () {

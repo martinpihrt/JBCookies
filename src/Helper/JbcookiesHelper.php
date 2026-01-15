@@ -126,27 +126,16 @@ class JbcookiesHelper
             }
         }
 
-        $cookieGroups          = InventoryHelper::getDefaultGroups();
         $durationDays          = (int) $params->get('duration_cookie_days', 365);
 
         $cookieInventory       = InventoryHelper::getInventoryFromParams($params);
+        $cookieGroups          = $this->buildOrderedGroupsFromParams($params);
         $cookieInventoryGroups = InventoryHelper::groupInventory($cookieInventory, $cookieGroups);
-
-        // echo '<pre>'; print_r($params->get('cookie_prefs')); echo '</pre>'; // For debug purposes
-
-        // $formToken             = Session::getFormToken();
-        // $ajaxEndpoint          = Route::_('index.php?option=com_ajax&module=jbcookies&method=inventory&format=json&' . $formToken . '=1', false);
 
         $cookiePreferencesConfig = [
             'domain'    => trim($domain),
             'duration'  => $durationDays,
-            // 'groups'    => $cookieGroups,
             'inventory' => $cookieInventoryGroups,
-            // 'ajax'      => [
-            //     'url'   => $ajaxEndpoint,
-            //     'token' => $formToken,
-            // ],
-            // 'allowBrowserCapture' => false,
         ];
 
         $this->injectConsentScript($cookiePreferencesConfig);
@@ -277,6 +266,59 @@ class JbcookiesHelper
         }
 
         return $format === 'json' ? $result : $this->renderInventoryConsole($result, $mode);
+    }
+
+    protected function buildOrderedGroupsFromParams(Registry $params): array
+    {
+        $rawPrefs = $params->get('cookie_prefs', []);
+        
+        $coerce = function ($value) {
+            if ($value instanceof Registry) {
+                return $value->toArray();
+            }
+            if (is_object($value)) {
+                return get_object_vars($value);
+            }
+            return is_array($value) ? $value : [];
+        };
+
+        $prefsArray = array_values($coerce($rawPrefs));
+
+        // Si no hay cookie_prefs configuradas, devolver los predeterminados
+        if (empty($prefsArray)) {
+            return array_values(InventoryHelper::getDefaultGroups());
+        }
+
+        // Hay cookie_prefs: construir grupos basados únicamente en ellas
+        $defaultGroups = InventoryHelper::getDefaultGroups();
+        $assoc = array_column($defaultGroups, null, 'slug');
+
+        $result = [];
+        $seen   = [];
+
+        foreach ($prefsArray as $groupRow) {
+            $slug = $this->sanitiseSlugLocal($coerce($groupRow)['category'] ?? '');
+
+            if ($slug !== '' && !isset($seen[$slug])) {
+                $result[] = $assoc[$slug] ?? [
+                    'slug'        => $slug,
+                    'title'       => $slug,
+                    'description' => '',
+                    'required'    => false,
+                    'default'     => false,
+                ];
+                $seen[$slug] = true;
+            }
+        }
+
+        return $result;
+    }
+
+    protected function sanitiseSlugLocal(string $raw): string
+    {
+        $slug = strtolower(preg_replace('/[^a-z0-9_\-]/i', '-', $raw));
+
+        return trim($slug, '-');
     }
 
     protected function authoriseScan(): void
